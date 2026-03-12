@@ -1,0 +1,29 @@
+{
+  "content": [
+    {
+      "content": null,
+      "created": "2026-03-12T19:38:12.309798Z",
+      "format": null,
+      "hash": null,
+      "hash_algorithm": null,
+      "last_modified": "2026-03-12T18:23:43.722808Z",
+      "mimetype": null,
+      "name": "python_notebook.ipynb",
+      "path": "python_notebook.ipynb",
+      "size": 105615,
+      "type": "notebook",
+      "writable": true
+    }
+  ],
+  "created": "2026-03-12T19:38:12.309798Z",
+  "format": "json",
+  "hash": null,
+  "hash_algorithm": null,
+  "last_modified": "2026-03-12T19:38:12.309798Z",
+  "mimetype": null,
+  "name": "",
+  "path": "",
+  "size": null,
+  "type": "directory",
+  "writable": true
+}
