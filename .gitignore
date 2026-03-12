@@ -1,0 +1,15 @@
+# Virtual Environment
+venv/
+
+# JupyterLite build artifacts
+dist/
+.jupyterlite.doit.db
+
+# Node dependencies (if any)
+node_modules/
+package.json
+package-lock.json
+
+# Cache
+__pycache__/
+*.pyc

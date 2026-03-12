@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Notebook Playground</title>
+    <!-- Tailwind CSS (CDN for static deployment) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        darkBg: '#050505',
+                        darkCard: '#111111',
+                        primary: '#ffffff',
+                        primaryHover: '#e5e5e5'
+                    },
+                    animation: {
+                        'spin-slow': 'spin 3s linear infinite',
+                        'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in': 'fadeIn 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script id="jupyter-config-data" type="application/json">{}</script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="static/style.css">
+    <style>
+        /* Force HTML root to match active theme bg to prevent scroll bleeding */
+        html { background-color: #fafafa; }
+        html.dark { background-color: #050505; }
+    </style>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PWA / Meta Tags -->
+    <meta name="theme-color" content="#050505">
+    <meta name="description" content="Run Python Colab notebook interactively in your browser with JupyterLite and Pyodide.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐍</text></svg>">
+</head>
+<body class="bg-[#fafafa] dark:bg-darkBg text-gray-900 dark:text-gray-200 min-h-screen flex flex-col transition-colors duration-500 font-sans selection:bg-gray-300 dark:selection:bg-gray-800 antialiased overflow-x-hidden">
+
+    <!-- Navbar -->
+    <nav class="w-full bg-transparent border-b border-gray-200 dark:border-white/10 py-5 px-8 flex justify-between items-center z-10 relative">
+        <div class="flex items-center space-x-3">
+            <i class="fa-brands fa-python text-2xl dark:text-gray-300"></i>
+            <span class="text-lg font-semibold tracking-wide">Playground</span>
+        </div>
+        <div class="flex items-center space-x-4">
+            <button id="theme-toggle" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/10 transition-colors" aria-label="Toggle Dark Mode">
+                <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
+            </button>
+            <a href="https://github.com" target="_blank" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+                <i class="fa-brands fa-github text-lg"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="hero" class="flex-grow flex flex-col justify-center items-center text-center px-6 py-24 relative overflow-hidden">
+        
+        <div class="animate-fade-in flex flex-col items-center max-w-3xl">
+            <div class="inline-flex items-center px-3 py-1 mb-8 rounded-full border border-gray-200 dark:border-white/10 text-xs font-medium bg-white/50 dark:bg-white/5 backdrop-blur-sm">
+                <span class="flex w-2 h-2 rounded-full bg-green-500 mr-2"></span>
+                WebAssembly Powered
+            </div>
+
+            <h1 class="text-5xl md:text-6xl font-bold mb-6 tracking-tight text-gray-900 dark:text-white leading-tight">
+                Data Science.<br/>
+                <span class="text-gray-400 dark:text-gray-500">In your browser.</span>
+            </h1>
+            
+            <p class="text-lg md:text-xl font-light mb-12 text-gray-600 dark:text-gray-400 max-w-xl leading-relaxed">
+                Run my full Jupyter notebook entirely client-side. Zero installation, zero server compute. Instant execution.
+            </p>
+            
+            <button onclick="launchApp()" class="group relative px-8 py-4 bg-gray-900 dark:bg-white text-white dark:text-black font-medium rounded-full overflow-hidden transition-all hover:scale-105 active:scale-95 flex items-center shadow-lg dark:hover:shadow-white/20">
+                <span class="relative z-10 flex items-center">
+                    Launch Notebook <i class="fa-solid fa-arrow-right ml-2 opacity-70 group-hover:translate-x-1 transition-transform"></i>
+                </span>
+            </button>
+        </div>
+        
+    </header>
+
+    <!-- Fullscreen Loader -->
+    <div id="loader" class="hidden flex-grow flex flex-col items-center justify-center">
+        <div class="relative w-16 h-16 mb-8">
+            <div class="absolute inset-0 border-[3px] border-gray-200 dark:border-gray-800 rounded-full"></div>
+            <div class="absolute inset-0 border-[3px] border-gray-900 dark:border-white border-t-transparent rounded-full animate-spin"></div>
+        </div>
+        <h2 class="text-xl font-medium mb-2 tracking-tight">Initializing Engine</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-500 max-w-xs text-center font-light">
+            Loading Pyodide environment...
+        </p>
+    </div>
+
+    <!-- Notebook Container -->
+    <main id="notebook-container" class="hidden fixed inset-0 z-50 bg-[#fafafa] dark:bg-[#050505]">
+        <!-- Fullscreen Header Controls -->
+        <div class="absolute top-4 right-6 z-[60] flex space-x-3">
+            <button onclick="closeApp()" class="bg-white/80 dark:bg-black/60 backdrop-blur-md hover:bg-gray-100 dark:hover:bg-white/10 text-gray-800 dark:text-gray-200 px-4 py-2.5 shadow-sm rounded-full text-sm font-medium transition border border-gray-200 dark:border-white/10 flex items-center">
+                <i class="fa-solid fa-xmark mr-2 text-xs"></i> Close
+            </button>
+        </div>
+        
+        <!-- The actual JupyterLite integration -->
+        <iframe id="jupyter-iframe" src="" class="w-full h-full border-none m-0 p-0 block" allow="cross-origin-isolated"></iframe>
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer" class="py-8 text-center text-sm font-light text-gray-500 dark:text-gray-500 border-t border-gray-200 dark:border-white/5 mx-8">
+        <p>Built with ❤️ by Saim Shakeel</p>
+    </footer>
+
+    <!-- Logic Script -->
+    <script src="static/script.js"></script>
+</body>
+</html>
