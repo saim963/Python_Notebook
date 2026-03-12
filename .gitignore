@@ -1,8 +1,9 @@
 # Virtual Environment
 venv/
 
-# JupyterLite temp cache
+# JupyterLite temp cache & build output
 .jupyterlite.doit.db
+dist/
 
 # Node dependencies (if any)
 node_modules/
