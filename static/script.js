@@ -46,13 +46,16 @@ function launchApp() {
     loader.classList.remove('hidden');
 
     // JupyterLite uses the /lab endpoint for the full environment.
-    // Ensure we handle GitHub Pages subdirectories correctly (e.g., /Python_Notebook/)
-    let basePath = window.location.pathname;
-    // Strip trailing slash if present
-    if (basePath.endsWith('/')) {
-        basePath = basePath.slice(0, -1);
+    // Construct absolute URL relative to the current window location to prevent subdirectory 404s
+    const loc = window.location;
+    let urlDir = loc.origin + loc.pathname;
+    // Strip filename if present
+    if (urlDir.endsWith('.html')) {
+        urlDir = urlDir.substring(0, urlDir.lastIndexOf('/') + 1);
+    } else if (!urlDir.endsWith('/')) {
+        urlDir += '/';
     }
-    iframe.src = basePath + '/lab/index.html?path=python_notebook.ipynb';
+    iframe.src = urlDir + 'lab/index.html?path=python_notebook.ipynb';
 
     // Simulate loader tracking the iframe load
     iframe.onload = () => {
