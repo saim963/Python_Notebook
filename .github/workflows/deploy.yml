@@ -36,8 +36,9 @@ jobs:
       - name: Inject Custom Landing Page
         run: |
           # Overwrite Jupyter's default index.html with our beautiful custom hero page
-          cp index.html dist/index.html
-          cp -r static dist/static
+          mkdir -p dist
+          cp -f index.html dist/index.html
+          cp -rf static/* dist/static/ || true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
