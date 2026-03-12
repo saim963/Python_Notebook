@@ -72,14 +72,21 @@ function launchApp() {
 
 function closeApp() {
     nbContainer.classList.add('hidden');
+    loader.classList.add('hidden');
     hero.classList.remove('hidden');
     footer.classList.remove('hidden');
     iframe.src = '';
-    window.location.hash = '';
+    // Use replaceState to cleanly remove hash without leaving a stale '#'
+    history.replaceState(null, '', window.location.pathname);
 }
 
-// Auto-launch if URL has hash
+// On page load: auto-launch only if hash is exactly #notebook
 if (window.location.hash === '#notebook') {
     launchApp();
+} else {
+    // Safety net: ensure landing page is always visible when not in notebook mode
+    hero.classList.remove('hidden');
+    footer.classList.remove('hidden');
+    nbContainer.classList.add('hidden');
+    loader.classList.add('hidden');
 }
-
