@@ -25,13 +25,13 @@ jobs:
 
       - name: Install JupyterLite
         run: |
-          python -m pip install jupyterlite-core jupyterlite-pyodide-kernel
+          python -m pip install jupyterlite-core jupyterlite-pyodide-kernel jupyter_server
 
       - name: Build JupyterLite Static Site
         run: |
           # Build the jupyter lab environment into 'dist' folder
           # It automatically picks up jupyter-lite.json, python_notebook.ipynb, and requirements.txt
-          jupyter lite build --output-dir dist
+          jupyter lite build --output-dir dist --contents python_notebook.ipynb --source-date-epoch=0
 
       - name: Inject Custom Landing Page
         run: |

@@ -46,9 +46,13 @@ function launchApp() {
     loader.classList.remove('hidden');
 
     // JupyterLite uses the /lab endpoint for the full environment.
-    // The path=? parameters force it to open our notebook immediately.
-    // If running via GitHub Actions deployment, the root will harbor the JupyterLite environment.
-    iframe.src = 'lab/index.html?path=python_notebook.ipynb';
+    // Ensure we handle GitHub Pages subdirectories correctly (e.g., /Python_Notebook/)
+    let basePath = window.location.pathname;
+    // Strip trailing slash if present
+    if (basePath.endsWith('/')) {
+        basePath = basePath.slice(0, -1);
+    }
+    iframe.src = basePath + '/lab/index.html?path=python_notebook.ipynb';
 
     // Simulate loader tracking the iframe load
     iframe.onload = () => {
