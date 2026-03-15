@@ -39,7 +39,7 @@
     </script>
     <script id="jupyter-config-data" type="application/json">{}</script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="assets/style.css">
     <style>
         /* Force HTML root to match active theme bg to prevent scroll bleeding */
         html {
@@ -131,16 +131,19 @@
 
     <!-- Notebook Container -->
     <main id="notebook-container" class="hidden fixed inset-0 z-50 bg-[#fafafa] dark:bg-[#050505]">
-        <!-- Fullscreen Header Controls -->
-        <div class="absolute top-4 right-6 z-[60] flex space-x-3">
+        <!-- Minimal Custom Topbar -->
+        <div class="w-full bg-white dark:bg-darkCard border-b border-gray-200 dark:border-white/10 px-4 py-2 flex justify-between items-center z-[60] shadow-sm shrink-0">
+            <div class="text-sm font-semibold flex items-center opacity-80">
+                <i class="fa-brands fa-python mr-2"></i> Interactive Playground
+            </div>
             <button onclick="closeApp()"
-                class="bg-white/80 dark:bg-black/60 backdrop-blur-md hover:bg-gray-100 dark:hover:bg-white/10 text-gray-800 dark:text-gray-200 px-4 py-2.5 shadow-sm rounded-full text-sm font-medium transition border border-gray-200 dark:border-white/10 flex items-center">
-                <i class="fa-solid fa-xmark mr-2 text-xs"></i> Close
+                class="text-xs font-medium px-4 py-1.5 bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 text-gray-800 dark:text-gray-200 rounded-md transition flex items-center shadow-sm border border-gray-200 dark:border-white/10">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Exit Notebook
             </button>
         </div>
 
         <!-- The actual JupyterLite integration -->
-        <iframe id="jupyter-iframe" src="" class="w-full h-full border-none m-0 p-0 block"
+        <iframe id="jupyter-iframe" src="about:blank" class="w-full h-full flex-grow border-none m-0 p-0 block"
             allow="cross-origin-isolated"></iframe>
     </main>
 
@@ -151,7 +154,7 @@
     </footer>
 
     <!-- Logic Script -->
-    <script src="static/script.js"></script>
+    <script src="assets/script.js"></script>
 </body>
 
 </html>

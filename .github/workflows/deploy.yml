@@ -39,8 +39,8 @@ jobs:
       - name: Inject Custom Landing Page
         run: |
           cp -f index.html dist/index.html
-          mkdir -p dist/static
-          cp -f static/* dist/static/
+          mkdir -p dist/assets
+          cp -f assets/* dist/assets/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

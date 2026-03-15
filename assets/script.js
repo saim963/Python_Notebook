@@ -38,6 +38,12 @@ const nbContainer = document.getElementById('notebook-container');
 const iframe = document.getElementById('jupyter-iframe');
 
 function launchApp() {
+    // If we're clicking the button but the hash isn't notebook yet, set it and let the listener handle the rest
+    if (window.location.hash !== '#notebook') {
+        window.location.hash = 'notebook';
+        return;
+    }
+
     // Hide Landing UI
     hero.classList.add('hidden');
     footer.classList.add('hidden');
@@ -45,39 +51,53 @@ function launchApp() {
     // Show Loader
     loader.classList.remove('hidden');
 
-    // JupyterLite uses the /lab endpoint for the full environment.
     // Construct absolute URL relative to the current window location to prevent subdirectory 404s
     const loc = window.location;
     let urlDir = loc.origin + loc.pathname;
-    // Strip filename if present
     if (urlDir.endsWith('.html')) {
         urlDir = urlDir.substring(0, urlDir.lastIndexOf('/') + 1);
     } else if (!urlDir.endsWith('/')) {
         urlDir += '/';
     }
-    iframe.src = urlDir + 'lab/index.html?path=python_notebook.ipynb';
+    
+    const targetSrc = urlDir + 'lab/index.html?path=python_notebook.ipynb';
+    
+    // If iframe is already at target, just show it immediately
+    if (iframe.src === targetSrc) {
+        loader.classList.add('hidden');
+        nbContainer.classList.remove('hidden');
+        nbContainer.style.display = 'flex';
+        nbContainer.classList.add('flex', 'flex-col');
+        return;
+    }
 
-    // Simulate loader tracking the iframe load
+    // First time launch: set onload and then src
     iframe.onload = () => {
-        // Give JupyterLite an extra second to initialize its own splash screen
         setTimeout(() => {
             loader.classList.add('hidden');
             nbContainer.classList.remove('hidden');
+            nbContainer.style.display = 'flex'; 
+            nbContainer.classList.add('flex', 'flex-col');
         }, 1500);
     };
-
-    // Update URL hash for sharing
-    window.location.hash = 'notebook';
+    iframe.src = targetSrc;
 }
 
 function closeApp() {
+    nbContainer.classList.remove('flex', 'flex-col');
     nbContainer.classList.add('hidden');
+    nbContainer.style.display = 'none';
     loader.classList.add('hidden');
     hero.classList.remove('hidden');
     footer.classList.remove('hidden');
-    iframe.src = '';
-    // Use replaceState to cleanly remove hash without leaving a stale '#'
-    history.replaceState(null, '', window.location.pathname);
+    
+    // We NO LONGER clear iframe.src to 'about:blank' here.
+    // Keeping it resident allows for instant re-launches and prevents state hangs.
+    
+    // Cleanly update hash so Browser Back works predictably
+    if (window.location.hash === '#notebook') {
+        window.location.hash = '';
+    }
 }
 
 // On page load: auto-launch only if hash is exactly #notebook
@@ -90,3 +110,12 @@ if (window.location.hash === '#notebook') {
     nbContainer.classList.add('hidden');
     loader.classList.add('hidden');
 }
+
+// Handle browser back/forward buttons strictly by state
+window.addEventListener('hashchange', () => {
+    if (window.location.hash === '#notebook') {
+        launchApp();
+    } else {
+        closeApp();
+    }
+});
